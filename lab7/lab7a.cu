@@ -30,18 +30,11 @@ std::vector<double> theEvents;
 __constant__ __device__ double dev_params[5];
 thrust::device_vector<double>* d_theEvents;
 
-// *** Testing purpose implementation
-// *** Following works but probably slows down the process ***
-// __device__ __host__ double gauss (double x, double mean, double sigma) {
-// 	return pow((x-mean)/sigma, 2);
-// }
-
 __device__ double dev_gaussian (double x, double mean, double sigma) {
-	return exp(-0.5*pow((x - mean)/sigma, 2) / (sigma * sqrt(2 * M_PI)));
+	return exp(-0.5*pow((x - mean)/sigma, 2)) / (sigma * sqrt(2 * M_PI));
 }
 
 struct GaussianFunctor {
-// 	GaussianFunctor(double _mean, double _sigma) : mean(_mean), sigma(_sigma) {}
 	__device__ double operator() (double x) {
 		double mean1 = dev_params[0];
 		double sigma1 = dev_params[1];
@@ -49,44 +42,11 @@ struct GaussianFunctor {
 		double sigma2 = dev_params[3];
 		double weight1 = dev_params[4];
 		
-//		double gauss1 = 1.0 / (sigma1 * sqrt(2*M_PI)); // normalization
-//		gauss1 *= exp(-0.5*pow((x-mean1)/sigma1, 2)); // actual gauss
-//		
-//		double gauss2 = 1.0 / (sigma2 * sqrt(2*M_PI));
-//		gauss2 *= exp(-0.5*pow((x-mean2)/sigma2, 2));
-//		
-//		return -2*log(weight1 * gauss1 + (1 - weight1) * gauss2);
-		
 		return -2 * log(weight1 * dev_gaussian(x, mean1, sigma1)
 				+ (1 - weight1) * dev_gaussian(x, mean2, sigma2)
 			       );
 	}
-// private:
-// 	double mean, sigma;
 };
-
-// FOR TESTING PURPOSES
-template <typename T> struct square {
-	__host__ __device__ T operator() (const T& x) const {
-		return x * x;
-	}
-};
-
-// void FitFcn (int& npar, double* deriv, double& fun, double* param, int flg) {
-// 	double mean = param[0];
-// 	double sigma = param[1];
-// 	
-// 	double nll = 0;
-// 	for (unsigned int i = 0; i < theEvents.size(); i++) {
-// 		double x = theEvents[i];
-// 		double thisEventProb = exp(-0.5*pow((x-mean)/sigma, 2));
-// 		nll -= 2*log(thisEventProb);
-// 		
-// 		// *** Test implementation
-// // 		nll -= gauss(x, mean, sigma);
-// 	}
-// 	fun = nll;
-// }
 
 void dev_FitFcn (int& npar, double* deriv, double& fun, double* param, int flg) {
 	cudaMemcpyToSymbol("dev_params", param, 5*sizeof(double), 0, cudaMemcpyHostToDevice);
@@ -112,8 +72,6 @@ int main(int argc, char** argv) {
 		} else {
 			theEvents.push_back(myRandom.Gaus(myMean2, mySigma2));
 		}
-// 		theEvents.push_back(myRandom.Gaus(0,1));
-// 		if (i % 100 == 0) std::cout << "## Just pushed " << theEvents[i] << " into number array" << std::endl;
 	}
 	
 	thrust::device_vector<double> d_localEvents(theEvents);

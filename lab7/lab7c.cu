@@ -42,7 +42,7 @@ __device__ dev_function_pointer pointer_to_breitwigner = dev_breitwigner;
 
 
 struct SumFunctor : public thrust::unary_function<double, double> {
-	double operator() (double x) {
+	__device__ double operator() (double x) {
 		dev_function_pointer f1 = reinterpret_cast<dev_function_pointer>(func1);
 		dev_function_pointer f2 = reinterpret_cast<dev_function_pointer>(func2);
 		

@@ -10,7 +10,7 @@ PATHTOROOT = /home/herten/fairsoft/extpkg/tools/root
 
 ROOTLIBS := -m64 -I$(PATHTOROOT)/include -L$(PATHTOROOT)/lib -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lm -ldl -L$(PATHTOROOT)/lib -lGui -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lm -ldl -lMinuit
 
-all:	lab7a
+all:	lab7a lab7b lab7c
 
 lab7a:	lab7a.cu
 		nvcc -arch=sm_20 $(ROOTLIBS) -o $@ $< 
