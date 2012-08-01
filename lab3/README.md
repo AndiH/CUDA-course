@@ -1,5 +1,5 @@
 ## LAB 3 ##
-URL: http://www.slac.stanford.edu/~rolfa/cudacourse/lab3.pdff (PDF also backupped here)
+URL: http://www.slac.stanford.edu/~rolfa/cudacourse/lab3.pdf (PDF also backupped here)
 
 Thrust, Thrust, Thrust.
 
